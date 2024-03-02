@@ -27,24 +27,34 @@ class FireBaseManager {
 
   /* API */
   Future<int> createGame(String owner) async {
-    final gameId = await generateUniqueGameId();
-    await _firestore
-    .collection('games')
-    .doc(gameId.toString())
-    .set({
-      'owner': owner,
-      'players': [owner],
-      'status': {
-        'hasStarted': false,
-        'hasEnded': false,
-      },
-      'settings': {
-        'maxPlayers': 10,
-        'timeLimit': 60,
-        'gameDuration': 300,
+    return await _firestore.runTransaction((transaction) async {
+      bool uniqueGameId = false;
+      DocumentReference? gameReference;
+      DocumentSnapshot? snapshot;
+      int gameId = 0;
+      while(!uniqueGameId){
+        gameId = generateGameId();
+        gameReference = _firestore.collection('games').doc(gameId.toString());
+        snapshot = await transaction.get(gameReference);
+        uniqueGameId = !snapshot.exists;
       }
-    });
-    return gameId;
+      print("After unique game id");
+      transaction.set(gameReference!, {
+        'owner': owner,
+        'players': [owner],
+        'status': {
+          'hasStarted': false,
+          'hasEnded': false,
+        },
+        'settings': {
+          'maxPlayers': 10,
+          'timeLimit': 60,
+          'gameDuration': 300,
+        }
+      });
+      print("After transaction set");
+      return gameId;
+    });   
   }
 
 
@@ -55,6 +65,8 @@ class FireBaseManager {
     // 4. Chcke game is not full. Done
     // 5. Check player name is unique. Done
     // 6. update the "players" array. 
+
+    // Check that the game actually exists.
     DocumentSnapshot<Map<String, dynamic>> gameDoc = await _firestore
     .collection('games')
     .doc(gameId.toString())
@@ -65,21 +77,26 @@ class FireBaseManager {
       print('Document does not exist on the database');
       return JoinGameStatus.gameDoesNotExist;
     }
+   
 
-    final status = checkGameSettings(gameDoc.data()!, player);
-    if (status != JoinGameStatus.success){
-      return status;
-    }
-
-  bool playerAlreadyExists = false;
-  await _firestore.runTransaction((transaction) async {
+    // Try to join the game
+    return await _firestore.runTransaction((transaction) async {
       var gameReference = _firestore.collection('games').doc(gameId.toString());
       var snapshot = await transaction.get(gameReference);
+
+      // Validate that the game setttings allows you to join the game.
+      final status = checkGameSettings(snapshot.data()!, player);
+      if (status != JoinGameStatus.success) {
+        return status;
+      }
+
+      // Try to add yourself to the game.
       var localPlayers = snapshot.get('players');
       if (!localPlayers.contains(player)) {
         localPlayers.add(player);
-        try{ 
+        try { 
           transaction.update(gameReference, {"players": localPlayers});
+          return JoinGameStatus.success;
         }
         catch (e) {
           print('Error: $e');
@@ -87,31 +104,15 @@ class FireBaseManager {
         }
     }
     else {
-      playerAlreadyExists = true;
+      return JoinGameStatus.nickNameAlreadyExists;
     }
   });
-  if (playerAlreadyExists) {
-    return JoinGameStatus.nickNameAlreadyExists;
-  }
-  return JoinGameStatus.success;
 }
 
   /* Helper Functions */
-  Future<int> generateUniqueGameId() async {
-    // Returns a 6 digit unique game id.
-    bool uniqueGameId = false;
-    int gameId = 0;
-    while (!uniqueGameId){
-      gameId = Random().nextInt(900000) + 100000;
-      QuerySnapshot<Map<String, dynamic>>  gamesQuery = await _firestore
-      .collection('games')
-      .where('id', isEqualTo: gameId.toString())
-      .get();
-      if (gamesQuery.docs.isEmpty) {
-        uniqueGameId = true;
-      }
-    }
-    return gameId;
+  int generateGameId() {
+    // Generate a 6-digit random number.
+    return Random().nextInt(900000) + 100000;
   }
 
   JoinGameStatus checkGameSettings(Map<String, dynamic> gameData, String player) {

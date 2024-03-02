@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'homepage.dart';
-import 'data_mode_impl.dart';
+import 'firebase_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

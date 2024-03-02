@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pic_n_run/data_mode_impl.dart';
+import 'package:pic_n_run/firebase_manager.dart';
 import 'theme.dart';
 
 class Header extends StatelessWidget {
