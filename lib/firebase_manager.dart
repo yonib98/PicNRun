@@ -16,6 +16,18 @@ enum JoinGameStatus {
 // TODO: We may need alot more of these "firestore transaction".
 
 class FireBaseManager {
+  
+  // Private constructor
+  FireBaseManager._privateConstructor();
+
+  // Static instance
+  static final FireBaseManager _instance = FireBaseManager._privateConstructor();
+
+  // Factory constructor
+  factory FireBaseManager() {
+    return _instance;
+  }
+
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   late FirebaseFirestore _firestore;
 
