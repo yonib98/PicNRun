@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'homepage.dart';
+import 'pick_username.dart';
 import 'firebase_manager.dart';
 
 void main() async {
@@ -29,7 +30,10 @@ class MyApp extends StatelessWidget {
       if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
                   theme: MaterialTheme(Typography().black).light(),
-                  home: HomePage(fbManager),
+                  home: HomePage(),
+                  routes: <String, WidgetBuilder> {
+                    '/pick_username': (BuildContext context) => PickUserNameScreen(),
+                  }
       );
       }
       return const Center(child: CircularProgressIndicator());

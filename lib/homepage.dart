@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pic_n_run/firebase_manager.dart';
+import 'package:pic_n_run/pick_username.dart';
 import 'theme.dart';
 
 class Header extends StatelessWidget {
@@ -19,8 +20,7 @@ class Header extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  final fbManager;
-  const HomePage(this.fbManager);
+  final FireBaseManager fbManager = FireBaseManager();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,10 +40,9 @@ class HomePage extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.70,
                     height: MediaQuery.of(context).size.height * 0.07,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        // Firebase stuff
-                        // print('Trying to create a game');
-                        //await fbManager.createGame("hello firesbase !");
+                      onPressed: () {
+                        // Navigate to "PickUserNameScreen" and pass the fbManager
+                        Navigator.pushNamed(context, '/pick_username',  arguments: {"creatingGame": true});
                       },
                       child: const Text('Create Game',
                                         style: TextStyle(fontSize: 16)),
@@ -65,9 +64,8 @@ class HomePage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         // Firebase stuff
-                        // print('Trying to join a game');
-                        // JoinGameStatus status = await fbManager.joinGame(754978, "yonib");
-                        // print(status);
+                        Navigator.pushNamed(context, '/pick_username', arguments: {"creatingGame": false});
+
                       },
                       child: const Text('Join Game',
                               style: TextStyle(fontSize: 16)),
