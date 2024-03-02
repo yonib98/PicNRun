@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "529067000738",
+    "project_id": "pic-n-run",
+    "storage_bucket": "pic-n-run.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529067000738:android:e05eb81e21fff12af1a8fb",
+        "android_client_info": {
+          "package_name": "com.technion.android.pic_n_run"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlbmnQ8iP3nDIYZslkTQlpj5PGkiDLHV4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
