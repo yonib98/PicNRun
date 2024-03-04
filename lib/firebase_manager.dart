@@ -30,6 +30,7 @@ class FireBaseManager {
 
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   late FirebaseFirestore _firestore;
+  late int gameId;
 
   Future<FirebaseApp> initializeFireBase() async {
     await _initialization;
@@ -65,6 +66,7 @@ class FireBaseManager {
         }
       });
       print("After transaction set");
+      this.gameId = gameId;
       return gameId;
     });   
   }
@@ -108,6 +110,7 @@ class FireBaseManager {
         localPlayers.add(player);
         try { 
           transaction.update(gameReference, {"players": localPlayers});
+          this.gameId = gameId;
           return JoinGameStatus.success;
         }
         catch (e) {
@@ -119,6 +122,10 @@ class FireBaseManager {
       return JoinGameStatus.nickNameAlreadyExists;
     }
   });
+}
+
+Stream<DocumentSnapshot> getGameStream() {
+  return _firestore.collection('games').doc(gameId.toString()).snapshots();
 }
 
   /* Helper Functions */

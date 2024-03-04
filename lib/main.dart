@@ -3,6 +3,7 @@ import 'theme.dart';
 import 'homepage.dart';
 import 'pick_username.dart';
 import 'firebase_manager.dart';
+import 'waiting_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
                   home: HomePage(),
                   routes: <String, WidgetBuilder> {
                     '/pick_username': (BuildContext context) => PickUserNameScreen(),
+                    '/waiting_screen':(BuildContext context ) => WaitingScreen(),
                   }
       );
       }

@@ -85,6 +85,7 @@ class JoinGameFormState extends State<JoinGameForm> {
             onPressed: () async {
               print("username is ${usernameController.text}, game id is ${gameIdController.text}");
               await fbManager.joinGame(int.parse(gameIdController.text), usernameController.text);
+              Navigator.pushNamed(context, '/waiting_screen');
               // TODO: error checking, show snackbars.
             },
             child: Text('Go'),
@@ -167,6 +168,8 @@ class CreateGameFormState extends State<CreateGameForm> {
             onPressed: () async {
               print("username is ${usernameController.text}");
               await fbManager.createGame(usernameController.text);
+              Navigator.pushNamed(context, '/waiting_screen', arguments: {"creatingGame": true});
+
               // TODO: error checking, show snack bar accordingly.
             },
             
@@ -196,9 +199,6 @@ class PickUserNameScreen extends StatelessWidget {
     final creatingGame = (ModalRoute.of(context)?.settings.arguments as Map)['creatingGame'];
     var form = creatingGame ? const CreateGameForm() : const JoinGameForm();
 
-    if (creatingGame){
-
-    }
     return Scaffold(
       body:
       Stack(
